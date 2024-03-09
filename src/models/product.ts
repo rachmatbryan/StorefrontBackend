@@ -2,7 +2,7 @@ import Client from '../database'
 
 export type Product={
     product_id?:number;
-    name:string;
+    product_name:string;
     price:number;
     category:string;
 
@@ -43,11 +43,11 @@ export class ProductStore{
     
       async create(product:Product): Promise<Product> {
         try {
-            const sql = 'INSERT INTO products (name,price,category) VALUES($1, $2, $3) RETURNING *'
+            const sql = 'INSERT INTO products (product_name,price,category) VALUES($1, $2, $3) RETURNING *'
             // @ts-ignore
             const conn = await Client.connect()
     
-            const result = await conn.query(sql, [product.name, product.price, product.category])
+            const result = await conn.query(sql, [product.product_name, product.price, product.category])
     
             const item = result.rows[0]
     
@@ -55,7 +55,7 @@ export class ProductStore{
     
             return item
         } catch (err) {
-            throw new Error(`Could not add item ${product.name}. Error: ${err}`)
+            throw new Error(`Could not add item ${product.product_name}. Error: ${err}`)
         }
       }
     

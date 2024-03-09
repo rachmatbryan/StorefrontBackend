@@ -10,22 +10,39 @@ export type Order={
 }
 
 export class OrderStore{
-    async index(): Promise<Order[]> {
+      async index(): Promise<Order[]> {
+          try {
+            // @ts-ignore
+            const conn = await Client.connect()
+            const sql = 'SELECT * FROM orders'
+        
+            const result = await conn.query(sql)
+        
+            conn.release()
+        
+            return result.rows 
+          } catch (err) {
+            throw new Error(`Could not get order. Error: ${err}`)
+          }
+        }
+    
+      async getCurrentOrdersByUser(user_id: number): Promise<Order[]> {
         try {
-          // @ts-ignore
           const conn = await Client.connect()
-          const sql = 'SELECT * FROM orders'
-      
-          const result = await conn.query(sql)
-      
+        
+          const sql = 'SELECT * FROM orders WHERE user_id = $1 AND order_status = $2'
+          
+          const result = await conn.query(sql, [user_id, 'active'])
+          
           conn.release()
-      
-          return result.rows 
+          
+          return result.rows
+        
         } catch (err) {
-          throw new Error(`Could not get order. Error: ${err}`)
+          throw new Error(`Could not find current orders for user ${user_id}. Error: ${err}`)
         }
       }
-    
+
       async show(order_id:number): Promise<Order> {
         try {
             const sql = 'SELECT * FROM orders WHERE order_id=($1)'

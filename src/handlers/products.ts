@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express'
 import { Product, ProductStore } from '../models/product'
+import jwt from 'jsonwebtoken'
 
 const store = new ProductStore()
 
@@ -16,7 +17,7 @@ const show = async (req: Request, res: Response) => {
 const create = async (req: Request, res: Response) => {
     try {
         const product: Product = {
-            name: req.body.name,
+            product_name: req.body.product_name,
             price: req.body.price,
             category: req.body.category
         }
@@ -34,10 +35,25 @@ const destroy = async (req: Request, res: Response) => {
     res.json(deleted)
 }
 
+const verifyAuthToken = (req: Request, res: Response, next) => {
+    try {
+        const authorizationHeader = req.headers.authorization
+        if (!authorizationHeader) {
+            throw new Error('No authorization header provided')
+        }
+        const token = authorizationHeader.split(' ')[1]
+        const decoded = jwt.verify(token, process.env.TOKEN_SECRET as string)
+
+        next()
+    } catch (error) {
+        res.status(401)
+    }
+}
+
 const productRoutes = (app: express.Application) => {
   app.get('/products', index)
   app.get('/products/:product_id', show)
-  app.post('/products', create)
+  app.post('/products', verifyAuthToken, create)
   app.delete('/products/:product_id', destroy)
 }
 
