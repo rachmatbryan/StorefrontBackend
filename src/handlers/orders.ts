@@ -17,7 +17,6 @@ const show = async (req: Request, res: Response) => {
 const create = async (req: Request, res: Response) => {
     
     const order: Order = {
-        product_id: req.body.product_id,
         user_id: req.body.product_id,
         quantity: req.body.quantity,
         order_status: req.body.order_status
@@ -34,8 +33,6 @@ const create = async (req: Request, res: Response) => {
 
 const currentOrders = async (req: Request, res: Response) => {
     const user_id = parseInt(req.params.user_id)
-    
- 
     try {
       const orders = await store.getCurrentOrdersByUser(user_id)
       res.json(orders)
@@ -65,12 +62,23 @@ const verifyAuthToken = (req: Request, res: Response, next) => {
     }
 }
 
+const addProduct = async (req: Request, res: Response) => {
+  const order_id: string = req.params.order_id
+  const product_id: string = req.body.product_id
+  const quantity: number = parseInt(req.body.quantity)
+
+  try {
+    const addedProduct = await store.addProduct(quantity, order_id, product_id)
+    res.json(addedProduct)
+  } catch(err) {
+    res.status(400)
+    res.json(err)
+  }
+} 
+
 const orderRoutes = (app: express.Application) => {
-  app.get('/orders', index)
-  app.get('/orders/:order_id', show)
   app.get('/users/:user_id/orders/current', verifyAuthToken, currentOrders);
-  app.post('/orders', create)
-  app.delete('/orders/:order_id', destroy)
+  app.post('/orders/:id/products', verifyAuthToken, addProduct)
 }
 
 export default orderRoutes
