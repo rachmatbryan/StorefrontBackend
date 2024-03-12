@@ -52,7 +52,7 @@ export class UserStore {
       const conn = await Client.connect();
       const hash = bcrypt.hashSync(
         user.password_digest + pepper,
-        parseInt(saltRounds)
+        parseInt(saltRounds as string)
       );
       const result = await conn.query(sql, [
         user.firstName,
