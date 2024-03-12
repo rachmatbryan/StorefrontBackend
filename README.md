@@ -12,18 +12,16 @@ What things you need to install the software and how to install them:
 
 1. **Install Dependencies**
 
-    ```sh
-    db-migrate
-    express
-    jsonwebtoken
-    pg
-    typescript
-    bcrypt
-    dotenv
-    jasmine
-    ```
-
-
+   ```sh
+   db-migrate
+   express
+   jsonwebtoken
+   pg
+   typescript
+   bcrypt
+   dotenv
+   jasmine
+   ```
 
 ## Setting Up and Connecting to the Database
 
@@ -32,39 +30,44 @@ To set up your PostgreSQL database and connect to it from the backend, follow th
 1. **Install PostgreSQL**: Make sure you have PostgreSQL installed on your machine. If not, download and install it from the [official PostgreSQL website](https://www.postgresql.org/download/).
 
 2. **Configure PostgreSQL**:
-    - Start the PostgreSQL service on your machine.
-    - Log in to the PostgreSQL CLI using `psql`.
-    - Create a new database for development and testing:
 
-        ```sql
-        CREATE DATABASE store_dev;
-        CREATE DATABASE store_test;
-        ```
+   - Start the PostgreSQL service on your machine.
+   - Log in to the PostgreSQL CLI using `psql`.
+   - Create a new database for development and testing:
+
+     ```sql
+     CREATE DATABASE store_dev;
+     CREATE DATABASE store_test;
+     ```
 
 3. **Environment Configuration**:
-    - Copy the `.env.example` file to a new file named `.env`.
-    - Fill in your database credentials and specify the ports in the `.env` file:
 
-        ```
-        POSTGRES_HOST=localhost
-        POSTGRES_DB=store_dev
-        POSTGRES_TEST_DB=store_test
-        POSTGRES_USER=yourusername
-        POSTGRES_PASSWORD=yourpassword
-        ENV=dev
-        PORT=3000
-        ```
+   - Copy the `.env.example` file to a new file named `.env`.
+   - Fill in your database credentials and specify the ports in the `.env` file:
 
-    Replace `yourusername` and `yourpassword` with the actual username and password for your PostgreSQL database.
+     ```
+     POSTGRES_HOST=127.0.0.1
+     POSTGRES_DB=db_name
+     POSTGRES_TEST_DB=db_name_test
+     POSTGRES_USER=user
+     POSTGRES_PASSWORD=pass
+     ENV=dev
+     BCRYPT_PASSWORD=samplepassword
+     SALT_ROUNDS=10
+     TOKEN_SECRET=secrettoken
+     ```
+
+   Replace `yourusername` and `yourpassword` with the actual username and password for your PostgreSQL database.
 
 4. **Running Database Migrations**:
-    - Navigate to your project directory and run the migration scripts to create the database schema:
 
-        ```sh
-        npm run migrate up
-        ```
+   - Navigate to your project directory and run the migration scripts to create the database schema:
 
-    Ensure that you have a `migrate` script set up in your `package.json` that points to your migration tool or files.
+     ```sh
+     npm run migrate up
+     ```
+
+   Ensure that you have a `migrate` script set up in your `package.json` that points to your migration tool or files.
 
 ## Ports
 
@@ -76,22 +79,22 @@ To install all the required packages for the backend server, follow these steps:
 
 1. **Navigate to your project directory**:
 
-    ```sh
-    cd path_to_your_project
-    ```
+   ```sh
+   cd path_to_your_project
+   ```
 
 2. **Install NPM packages**:
 
-    ```sh
-    npm install
-    ```
+   ```sh
+   npm install
+   ```
 
-    This will install all dependencies listed in your `package.json` file.
+   This will install all dependencies listed in your `package.json` file.
 
 3. **Start the Server**:
 
-    ```sh
-    npm start
-    ```
+   ```sh
+   npm start
+   ```
 
-    This command will start the backend server, and you should see a message indicating that the server is running on the port specified in your `.env` file.
+   This command will start the backend server, and you should see a message indicating that the server is running on the port specified in your `.env` file.
