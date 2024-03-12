@@ -63,6 +63,7 @@ const verifyAuthToken = (req: Request, res: Response, next) => {
 
 const addProduct = async (req: Request, res: Response) => {
   const order_id: string = req.params.order_id;
+
   const product_id: string = req.body.product_id;
   const quantity: number = parseInt(req.body.quantity);
 
