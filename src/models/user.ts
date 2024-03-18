@@ -14,7 +14,6 @@ export type User = {
 export class UserStore {
   async index(): Promise<User[]> {
     try {
-      // @ts-ignore
       const conn = await Client.connect();
       const sql = "SELECT * FROM users";
 
@@ -31,7 +30,7 @@ export class UserStore {
   async show(user_id: number): Promise<User> {
     try {
       const sql = "SELECT * FROM users WHERE user_id=($1)";
-      // @ts-ignore
+
       const conn = await Client.connect();
 
       const result = await conn.query(sql, [user_id]);
@@ -48,7 +47,7 @@ export class UserStore {
     try {
       const sql =
         "INSERT INTO users (firstName, lastName, password_digest) VALUES($1, $2, $3) RETURNING *";
-      // @ts-ignore
+
       const conn = await Client.connect();
       const hash = bcrypt.hashSync(
         user.password_digest + pepper,

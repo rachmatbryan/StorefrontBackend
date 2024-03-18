@@ -5,13 +5,25 @@ import jwt from "jsonwebtoken";
 const store = new OrderStore();
 
 const index = async (_req: Request, res: Response) => {
-  const order = await store.index();
-  res.json(order);
+  try {
+    const orders = await store.index();
+    res.json(orders);
+  } catch (err) {
+    console.error(err);
+    res
+      .status(500)
+      .json({ error: "An error occurred while retrieving orders" });
+  }
 };
 
 const show = async (req: Request, res: Response) => {
-  const order = await store.show(Number(req.params.order_id));
-  res.json(order);
+  try {
+    const order = await store.show(Number(req.params.order_id));
+    res.json(order);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "An error occurred while retrieving order" });
+  }
 };
 
 const create = async (req: Request, res: Response) => {
@@ -42,8 +54,13 @@ const currentOrders = async (req: Request, res: Response) => {
 };
 
 const destroy = async (req: Request, res: Response) => {
-  const deleted = await store.delete(Number(req.params.order_id));
-  res.json(deleted);
+  try {
+    const deleted = await store.delete(Number(req.params.order_id));
+    res.json(deleted);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "An error occurred while deleting order" });
+  }
 };
 
 const verifyAuthToken = (req: Request, res: Response, next) => {
@@ -57,7 +74,7 @@ const verifyAuthToken = (req: Request, res: Response, next) => {
 
     next();
   } catch (error) {
-    res.status(401);
+    res.status(401).json({ error: "Access denied, invalid token" });
   }
 };
 

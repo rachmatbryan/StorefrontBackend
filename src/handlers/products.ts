@@ -5,13 +5,28 @@ import jwt from "jsonwebtoken";
 const store = new ProductStore();
 
 const index = async (_req: Request, res: Response) => {
-  const product = await store.index();
-  res.json(product);
+  try {
+    const product = await store.index();
+    res.json(product);
+  } catch (err) {
+    console.error(err);
+
+    res
+      .status(500)
+      .json({ error: "An error occurred while retrieving product" });
+  }
 };
 
 const show = async (req: Request, res: Response) => {
-  const product = await store.show(Number(req.params.product_id));
-  res.json(product);
+  try {
+    const product = await store.show(Number(req.params.product_id));
+    res.json(product);
+  } catch (err) {
+    console.error(err);
+    res
+      .status(500)
+      .json({ error: "An error occurred while retrieving product" });
+  }
 };
 
 const create = async (req: Request, res: Response) => {
@@ -31,8 +46,13 @@ const create = async (req: Request, res: Response) => {
 };
 
 const destroy = async (req: Request, res: Response) => {
-  const deleted = await store.delete(Number(req.params.product_id));
-  res.json(deleted);
+  try {
+    const deleted = await store.delete(Number(req.params.product_id));
+    res.json(deleted);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "An error occurred while deleting product" });
+  }
 };
 
 const verifyAuthToken = (req: Request, res: Response, next) => {
@@ -46,7 +66,7 @@ const verifyAuthToken = (req: Request, res: Response, next) => {
 
     next();
   } catch (error) {
-    res.status(401);
+    res.status(401).json({ error: "Access denied, invalid token" });
   }
 };
 

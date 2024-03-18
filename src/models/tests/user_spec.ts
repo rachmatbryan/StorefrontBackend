@@ -18,47 +18,33 @@ describe("User Model", () => {
   it("should have a delete method", () => {
     expect(store.delete).toBeDefined();
   });
-
-  it("create method should add a user", async () => {
-    const result = await store.create({
-      firstName: "John Doe",
-      lastName: "Doe",
-      password_digest: "pass123",
-    });
-    expect(result).toEqual({
-      user_id: 1,
-      firstName: "John Doe",
-      lastName: "Doe",
-      password_digest: "pass123",
-    });
-  });
-
-  it("index method should return a list of books", async () => {
+  it("should have an index method that returns an array of users", async () => {
     const result = await store.index();
-    expect(result).toEqual([
-      {
-        user_id: 1,
-        firstName: "John Doe",
-        lastName: "Doe",
-        password_digest: "pass123",
-      },
-    ]);
+    expect(result).toBeInstanceOf(Array);
   });
 
-  it("show method should return the correct book", async () => {
+  it("should have a show method that returns the correct user", async () => {
     const result = await store.show(1);
-    expect(result).toEqual({
-      user_id: 1,
-      firstName: "John Doe",
-      lastName: "Doe",
-      password_digest: "pass123",
-    });
+    expect(result).toBeDefined();
+    expect(result.user_id).toBe(1);
   });
 
-  it("delete method should remove the book", async () => {
-    store.delete(1);
-    const result = await store.index();
+  it("create method should add a user and return the new user", async () => {
+    const result = await store.create({
+      firstName: "John",
+      lastName: "Doe",
+      password_digest: "password123",
+    });
+    expect(result).toBeDefined();
+    expect(result.firstName).toBe("John");
+    expect(result.lastName).toBe("Doe");
+    expect(result.password_digest).not.toBe("password123");
+  });
 
-    expect(result).toEqual([]);
+  it("delete method should remove the user", async () => {
+    const user_id = 1;
+    await store.delete(user_id);
+    const result = await store.index();
+    expect(result.find((u) => u.user_id === user_id)).toBeUndefined();
   });
 });

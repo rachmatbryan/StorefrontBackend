@@ -5,13 +5,23 @@ import jwt from "jsonwebtoken";
 const store = new UserStore();
 
 const index = async (_req: Request, res: Response) => {
-  const user = await store.index();
-  res.json(user);
+  try {
+    const user = await store.index();
+    res.json(user);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "An error occurred while retrieving users" });
+  }
 };
 
 const show = async (req: Request, res: Response) => {
-  const user = await store.show(Number(req.params.user_id));
-  res.json(user);
+  try {
+    const user = await store.show(Number(req.params.user_id));
+    res.json(user);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "An error occurred while retrieving user" });
+  }
 };
 
 const create = async (req: Request, res: Response) => {
@@ -32,8 +42,13 @@ const create = async (req: Request, res: Response) => {
 };
 
 const destroy = async (req: Request, res: Response) => {
-  const deleted = await store.delete(Number(req.params.user_id));
-  res.json(deleted);
+  try {
+    const deleted = await store.delete(Number(req.params.user_id));
+    res.json(deleted);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "An error occurred deleting user" });
+  }
 };
 
 const verifyAuthToken = (req: Request, res: Response, next) => {
@@ -47,7 +62,7 @@ const verifyAuthToken = (req: Request, res: Response, next) => {
 
     next();
   } catch (error) {
-    res.status(401);
+    res.status(401).json({ error: "Access denied, invalid token" });
   }
 };
 

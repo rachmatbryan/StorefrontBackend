@@ -55,10 +55,19 @@ describe("Product Model", () => {
     });
   });
 
-  it("delete method should remove the book", async () => {
-    store.delete(1);
+  it("delete method should remove the product", async () => {
+    const createdProduct = await store.create({
+      product_name: "TV",
+      price: 2000,
+      category: "Electronics",
+    });
+
+    await store.delete(createdProduct.product_id as number);
     const result = await store.index();
 
-    expect(result).toEqual([]);
+    const productExists = result.some(
+      (product) => product.product_id === createdProduct.product_id
+    );
+    expect(productExists).toBe(false);
   });
 });
