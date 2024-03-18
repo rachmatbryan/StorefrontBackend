@@ -22,7 +22,17 @@ describe("User Model", () => {
     const result = await store.index();
     expect(result).toBeInstanceOf(Array);
   });
+  it("fetch all users", async function () {
+    const user: User = {
+      firstName: "John",
+      lastName: "Doe",
+      password_digest: "password123",
+    };
+    await store.create(user);
+    const users = await store.index();
 
+    expect(users.length).toBeGreaterThan(0);
+  });
   it("should have a show method that returns the correct user", async () => {
     const result = await store.show(1);
     expect(result).toBeDefined();

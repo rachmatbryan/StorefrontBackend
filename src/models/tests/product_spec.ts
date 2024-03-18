@@ -19,7 +19,19 @@ describe("Product Model", () => {
     expect(store.delete).toBeDefined();
   });
 
-  it("create method should add a user", async () => {
+  it("fetch all products", async function () {
+    const product: Product = {
+      product_name: "TV",
+      price: 2000,
+      category: "Electronics",
+    };
+    await store.create(product);
+    const products = await store.index();
+
+    expect(products.length).toBeGreaterThan(0);
+  });
+
+  it("create method should add a product", async () => {
     const result = await store.create({
       product_name: "TV",
       price: 2000,
@@ -33,7 +45,7 @@ describe("Product Model", () => {
     });
   });
 
-  it("index method should return a list of books", async () => {
+  it("index method should return a list of products", async () => {
     const result = await store.index();
     expect(result).toEqual([
       {
@@ -45,7 +57,7 @@ describe("Product Model", () => {
     ]);
   });
 
-  it("show method should return the correct book", async () => {
+  it("show method should return the correct product", async () => {
     const result = await store.show(1);
     expect(result).toEqual({
       product_id: 1,
