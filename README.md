@@ -56,7 +56,7 @@ Below is the schema for the various tables in the database along with their colu
 
 | Column Name | Data Type | Description                                      |
 |-------------|-----------|--------------------------------------------------|
-| id          | SERIAL    | Primary key, auto-increments.                    |
+| op_id       | SERIAL    | Primary key, auto-increments.                    |
 | order_id    | BIGINT    | Foreign key to the orders table.                 |
 | product_id  | BIGINT    | Foreign key to the products table.               |
 | quantity    | INTEGER   | The quantity of the product included in the order. |
