@@ -22,6 +22,46 @@ What things you need to install the software and how to install them:
    dotenv
    jasmine
    ```
+# Database Schema Documentation
+
+Below is the schema for the various tables in the database along with their columns and data types.
+
+## Users Table
+
+| Column Name     | Data Type    | Description                    |
+|-----------------|--------------|--------------------------------|
+| user_id         | SERIAL       | Primary key, auto-increments.  |
+| firstName       | VARCHAR(50)  | The user's first name.         |
+| lastName        | VARCHAR(50)  | The user's last name.          |
+| password_digest | VARCHAR(255) | The user's hashed password.    |
+
+## Products Table
+
+| Column Name | Data Type          | Description                        |
+|-------------|--------------------|------------------------------------|
+| product_id  | SERIAL             | Primary key, auto-increments.      |
+| name        | VARCHAR(255)       | The name of the product.           |
+| price       | DECIMAL(10, 2)     | The price of the product.          |
+| category    | VARCHAR(100)       | The category the product belongs to. |
+
+## Orders Table
+
+| Column Name  | Data Type    | Description                                      |
+|--------------|--------------|--------------------------------------------------|
+| order_id     | SERIAL       | Primary key, auto-increments.                    |
+| user_id      | BIGINT       | Foreign key to the users table.                  |
+| order_status | VARCHAR(50)  | The status of the order (e.g., 'active').        |
+
+## Order Products Table (Join Table for Many-to-Many Relationship)
+
+| Column Name | Data Type | Description                                      |
+|-------------|-----------|--------------------------------------------------|
+| id          | SERIAL    | Primary key, auto-increments.                    |
+| order_id    | BIGINT    | Foreign key to the orders table.                 |
+| product_id  | BIGINT    | Foreign key to the products table.               |
+| quantity    | INTEGER   | The quantity of the product included in the order. |
+
+
 
 ## Setting Up and Connecting to the Database
 
