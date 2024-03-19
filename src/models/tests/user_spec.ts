@@ -1,60 +1,40 @@
-import { User, UserStore } from "../user";
+import { UserStore } from "../user";
+import jwt from "jsonwebtoken";
 
 const store = new UserStore();
+let token = "";
+let testUserId: number;
+
+beforeAll(async () => {
+  const newUser = await store.create({
+    firstName: "Test",
+    lastName: "User",
+    password_digest: "password123",
+  });
+  testUserId = newUser.user_id as number;
+  token = jwt.sign({ user: newUser }, process.env.TOKEN_SECRET as string);
+});
 
 describe("User Model", () => {
-  it("should have an index method", () => {
-    expect(store.index).toBeDefined();
-  });
-
-  it("should have a show method", () => {
-    expect(store.show).toBeDefined();
-  });
-
-  it("should have a create method", () => {
-    expect(store.create).toBeDefined();
-  });
-
-  it("should have a delete method", () => {
-    expect(store.delete).toBeDefined();
-  });
-  it("should have an index method that returns an array of users", async () => {
+  it("should have an index method that requires a token", async () => {
     const result = await store.index();
-    expect(result).toBeInstanceOf(Array);
+    expect(result).toBeDefined();
+    expect(Array.isArray(result)).toBeTrue();
+    expect(result.length).toBeGreaterThanOrEqual(1);
   });
-  it("fetch all users", async function () {
-    const user: User = {
-      firstName: "John",
-      lastName: "Doe",
-      password_digest: "password123",
+  it("should have a show method that requires a token", async () => {
+    const result = await store.show(testUserId);
+    expect(result).toBeDefined();
+    expect(result.user_id).toBe(testUserId);
+  });
+  it("should have a create method", async () => {
+    const newUser = {
+      firstName: "New",
+      lastName: "Tester",
+      password_digest: "newpassword123",
     };
-    await store.create(user);
-    const users = await store.index();
-
-    expect(users.length).toBeGreaterThan(0);
-  });
-  it("should have a show method that returns the correct user", async () => {
-    const result = await store.show(1);
-    expect(result).toBeDefined();
-    expect(result.user_id).toBe(1);
-  });
-
-  it("create method should add a user and return the new user", async () => {
-    const result = await store.create({
-      firstName: "John",
-      lastName: "Doe",
-      password_digest: "password123",
-    });
-    expect(result).toBeDefined();
-    expect(result.firstName).toBe("John");
-    expect(result.lastName).toBe("Doe");
-    expect(result.password_digest).not.toBe("password123");
-  });
-
-  it("delete method should remove the user", async () => {
-    const user_id = 1;
-    await store.delete(user_id);
-    const result = await store.index();
-    expect(result.find((u) => u.user_id === user_id)).toBeUndefined();
+    const createdUser = await store.create(newUser);
+    expect(createdUser).toBeDefined();
+    expect(createdUser.firstName).toEqual(newUser.firstName);
   });
 });

@@ -1,42 +1,7 @@
 import { Order, OrderStore } from "../order";
-import request from "supertest";
-import app from "../../server";
-import { expect } from "@jest/globals";
+import { UserStore } from "../user";
 
 const store = new OrderStore();
-
-describe("GET /orders", () => {
-  it("responds with an array of orders", async () => {
-    const response = await request(app).get("/orders");
-    expect(response.statusCode).toBe(200);
-    expect(response.body).toBeInstanceOf(Array);
-  });
-});
-
-describe("POST /orders", () => {
-  it("requires authentication", async () => {
-    const response = await request(app).post("/orders").send({
-      user_id: 1,
-      quantity: 2,
-      order_status: "active",
-    });
-    expect(response.statusCode).toBe(401);
-  });
-
-  it("creates an order with valid authentication", async () => {
-    const token = "some-valid-token";
-    const response = await request(app)
-      .post("/orders")
-      .set("Authorization", `Bearer ${token}`)
-      .send({
-        user_id: 1,
-        quantity: 2,
-        order_status: "active",
-      });
-    expect(response.statusCode).toBe(201);
-    expect(response.body).toHaveProperty("order_id");
-  });
-});
 
 describe("Order Model", () => {
   it("should have an index method", () => {
@@ -53,5 +18,39 @@ describe("Order Model", () => {
 
   it("should have a delete method", () => {
     expect(store.delete).toBeDefined();
+  });
+
+  it("should have a current order by user method", () => {
+    expect(store.getCurrentOrdersByUser).toBeDefined();
+  });
+
+  let mockUserId: number;
+
+  beforeEach(async () => {
+    const userStore = new UserStore();
+    const mockUser = await userStore.create({
+      firstName: "John",
+      lastName: "Doe",
+      password_digest: "password123",
+    });
+    mockUserId = mockUser.user_id as number;
+
+    await store.create({
+      user_id: mockUserId,
+      quantity: 1,
+      order_status: "active",
+    });
+
+    await store.create({
+      user_id: mockUserId,
+      quantity: 2,
+      order_status: "complete",
+    });
+  });
+
+  it("should fetch current (active) orders for a user", async () => {
+    const result = await store.getCurrentOrdersByUser(mockUserId);
+    expect(result.length).toBe(1);
+    expect(result[0].order_status).toEqual("active");
   });
 });

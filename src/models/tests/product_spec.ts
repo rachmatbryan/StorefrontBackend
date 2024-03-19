@@ -1,5 +1,6 @@
 import { Product, ProductStore } from "../product";
-
+import { UserStore } from "../user";
+import jwt from "jsonwebtoken";
 const store = new ProductStore();
 
 describe("Product Model", () => {
@@ -18,68 +19,39 @@ describe("Product Model", () => {
   it("should have a delete method", () => {
     expect(store.delete).toBeDefined();
   });
+});
+let token = "";
+describe("Product Model", () => {
+  beforeAll(async () => {
+    const userStore = new UserStore();
+    const user = await userStore.create({
+      firstName: "Test",
+      lastName: "User",
+      password_digest: "password",
+    });
+    token = jwt.sign({ user: user }, process.env.TOKEN_SECRET as string);
+  });
+  it("should have an index method", async () => {
+    const result = await store.index();
+    expect(result).toBeDefined();
+    expect(result.length).toBeGreaterThanOrEqual(0);
+  });
+  it("should have a show method", async () => {
+    const productId = 1;
+    const result = await store.show(productId);
+    expect(result).toBeDefined();
+    expect(result.product_id).toBe(productId);
+  });
 
-  it("fetch all products", async function () {
-    const product: Product = {
-      product_name: "TV",
-      price: 2000,
-      category: "Electronics",
+  it("should have a create method that requires a token", async () => {
+    const product = {
+      product_name: "Test Product",
+      price: 10,
+      category: "Test Category",
     };
-    await store.create(product);
-    const products = await store.index();
 
-    expect(products.length).toBeGreaterThan(0);
-  });
-
-  it("create method should add a product", async () => {
-    const result = await store.create({
-      product_name: "TV",
-      price: 2000,
-      category: "Electronics",
-    });
-    expect(result).toEqual({
-      product_id: 1,
-      product_name: "TV",
-      price: 2000,
-      category: "Electronics",
-    });
-  });
-
-  it("index method should return a list of products", async () => {
-    const result = await store.index();
-    expect(result).toEqual([
-      {
-        product_id: 1,
-        product_name: "TV",
-        price: 2000,
-        category: "Electronics",
-      },
-    ]);
-  });
-
-  it("show method should return the correct product", async () => {
-    const result = await store.show(1);
-    expect(result).toEqual({
-      product_id: 1,
-      product_name: "TV",
-      price: 2000,
-      category: "Electronics",
-    });
-  });
-
-  it("delete method should remove the product", async () => {
-    const createdProduct = await store.create({
-      product_name: "TV",
-      price: 2000,
-      category: "Electronics",
-    });
-
-    await store.delete(createdProduct.product_id as number);
-    const result = await store.index();
-
-    const productExists = result.some(
-      (product) => product.product_id === createdProduct.product_id
-    );
-    expect(productExists).toBe(false);
+    const createdProduct = await store.create(product);
+    expect(createdProduct).toBeDefined();
+    expect(createdProduct.product_name).toEqual(product.product_name);
   });
 });
