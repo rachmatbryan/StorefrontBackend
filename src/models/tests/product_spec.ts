@@ -1,6 +1,8 @@
 import { Product, ProductStore } from "../product";
 import { UserStore } from "../user";
 import jwt from "jsonwebtoken";
+import request from "supertest";
+import app from "../../server";
 const store = new ProductStore();
 
 describe("Product Model", () => {
@@ -53,5 +55,34 @@ describe("Product Model", () => {
     const createdProduct = await store.create(product);
     expect(createdProduct).toBeDefined();
     expect(createdProduct.product_name).toEqual(product.product_name);
+  });
+  it("GET /products - should return a list of products", async () => {
+    const response = await request(app)
+      .get("/products")
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(200);
+    expect(Array.isArray(response.body)).toBe(true);
+  });
+
+  it("GET /products/:product_id - should return a specific product", async () => {
+    const response = await request(app)
+      .get("/products/1")
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(200);
+    expect(response.body).toBeDefined();
+  });
+
+  it("POST /products - should create a new product", async () => {
+    const product = {
+      product_name: "Test Product",
+      price: 10,
+      category: "Test Category",
+    };
+    const response = await request(app)
+      .post("/products")
+      .set("Authorization", `Bearer ${token}`)
+      .send(product);
+    expect(response.status).toBe(200);
+    expect(response.body).toBeDefined();
   });
 });
